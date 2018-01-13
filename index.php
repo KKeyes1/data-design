@@ -65,7 +65,7 @@
 	<p>ONE article can have MANY claps</p>
 	<p>MANY profiles can have MANY claps for MANY articles</p>
 	<hr>
-	<h2>Entity Relationship Diagram</h2>
-	<img src="/images/wbFavicon.png" alt="An ERD for Medium.com" />
+	<h3>Entity Relationship Diagram</h3>
+	<img src="./images/erd.svg" alt="An ERD for Medium.com" />
 	</body>
 </html>
