@@ -44,28 +44,28 @@
 			<li>profileEmail</li>
 			<li>profileHash (for verification)</li>
 			<li>profileSalt (for verification</li>
-		</ul>
-		<h3>article</h3>
-		<ul>
-			<li>articleId (primary id)</li>
-			<li>articleAuthorProfileId (foreign key)</li>
-			<li>articleTitle</li>
-			<li>articlePostDate</li>
-			<li>articleContent</li>
-		</ul>
-		<h3>clap (weak entity)</h3>
-		<ul>
-			<li>clapId (primary key)</li>
-			<li>clapProfileId (foreign key)</li>
-			<li>clapArticleId (foreign key)</li>
-		</ul>
-		<h3>Relationships</h3>
-		<p>ONE profile can have MANY articles</p>
-		<p>ONE profiles can have MANY claps</p>
-		<p>ONE article can have MANY claps</p>
-		<p>MANY profiles can have MANY claps for MANY articles</p>
-		<hr>
-		<h2>Entity Relationship Diagram</h2>
-		<img src="/images/erd.svg" alt="An ERD for Medium.com" />
+	</ul>
+	<h3>article</h3>
+	<ul>
+		<li>articleId (primary id)</li>
+		<li>articleAuthorProfileId (foreign key)</li>
+		<li>articleTitle</li>
+		<li>articlePostDate</li>
+		<li>articleContent</li>
+	</ul>
+	<h3>clap (weak entity)</h3>
+	<ul>
+		<li>clapId (primary key)</li>
+		<li>clapProfileId (foreign key)</li>
+		<li>clapArticleId (foreign key)</li>
+	</ul>
+	<h3>Relationships</h3>
+	<p>ONE profile can have MANY articles</p>
+	<p>ONE profiles can have MANY claps</p>
+	<p>ONE article can have MANY claps</p>
+	<p>MANY profiles can have MANY claps for MANY articles</p>
+	<hr>
+	<h2>Entity Relationship Diagram</h2>
+	<img src="/images/wbFavicon.png" alt="An ERD for Medium.com" />
 	</body>
 </html>
