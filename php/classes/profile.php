@@ -30,7 +30,7 @@ class profile {
 	private $profileFullName;
 	/**
 	 * token handed out to verify that account is not malicious
-	 * @var $profileActivationToken
+	 * @var string $profileActivationToken
 	 **/
 	private $profileActivationToken;
 	/**
@@ -39,25 +39,27 @@ class profile {
 	 **/
 	private $profileCaption;
 	/**
-	 * email associated with this profile
+	 * email associated with this profile; this is a unique index
 	 * @var string $profileEmail
 	 **/
 	private $profileEmail;
-	/**
-	 * phone number stored for this profile without "-"
-	 * @var string $profilePhone
-	 **/
-	private $profilePhone;
 	/**
 	 * hash for profile password
 	 * @var string $profileHash
 	 **/
 	private $profileHash;
 	/**
+	 * phone number stored for this profile without "-"
+	 * @var string $profilePhone
+	 **/
+	private $profilePhone;
+	/**
 	 * salt stored for this profile
-	 * @var $profileSalt
+	 * @var string $profileSalt
 	 **/
 	private $profileSalt;
+
+
 
 
 }
