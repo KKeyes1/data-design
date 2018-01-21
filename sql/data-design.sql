@@ -1,4 +1,4 @@
-ALTER DATABASE medium CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER DATABASE kkeyes1 CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 DROP TABLE IF EXISTS clap;
 DROP TABLE IF EXISTS article;
@@ -23,7 +23,7 @@ CREATE TABLE article (
 	articleContent VARCHAR(140) NOT NULL,
 	articleDate DATETIME(6) NOT NULL,
 	INDEX(articleAuthorProfileId),
-	FOREIGN KEY(articleProfileId) REFERENCES profile(profileId),
+	FOREIGN KEY(articleAuthorProfileId) REFERENCES profile(profileId),
 	PRIMARY KEY(articleId)
 );
 
