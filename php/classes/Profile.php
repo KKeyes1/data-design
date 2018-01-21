@@ -2,7 +2,7 @@
 namespace Edu\Cnm\DataDesign;
 
 require_once("autoload.php");
-require_once(dirname(__DIR__›) . "autoload.php");
+require_once(dirname(__DIR__) . "autoload.php");
 
 use Ramsey\Uuid\Uuid;
 
