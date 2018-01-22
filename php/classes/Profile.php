@@ -71,7 +71,7 @@ class Profile {
 	/**
 	 * mutator function for profileId
 	 *
-	 * @param Uuid | string $newProfileId with the value of profileId
+	 * @param Uuid|string $newProfileId with the value of profileId
 	 * @throws \RangeException if $newProfileId is not positive
 	 * @throws \TypeError id profile id is not positive
 	 **/
@@ -197,7 +197,7 @@ class Profile {
 	public function setProfileEmail(string $newProfileEmail): void {
 		// verify the email is secure
 		$newProfileEmail = trim($newProfileEmail);
-		$newProfileEmail = filter_var($newProfileEmail, FILTER_VALIDATE_EMAIL);
+		$newProfileEmail = filter_var($newProfileEmail, FILTER_SANITIZE_EMAIL);
 		if(empty($newProfileEmail) === true) {
 			throw(new \InvalidArgumentException("profile email is empty or insecure"));
 		}
