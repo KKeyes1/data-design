@@ -2,7 +2,7 @@
 namespace Edu\Cnm\DataDesign;
 
 require_once("autoload.php");
-require_once(dirname(__DIR__) . "autoload.php");
+require_once(dirname(__DIR__, 2) . "/vendor/autoload.php");
 
 use Ramsey\Uuid\Uuid;
 
@@ -79,7 +79,7 @@ class Article {
 	/**
 	 * mutator method for article id
 	 *
-	 * @param Uuid/string $newArticleId new value of article id
+	 * @param Uuid|string $newArticleId new value of article id
 	 * @throws \RangeException if $newArticleId is not positive
 	 * @throws \TypeError if $newArticleId is not a uuid or string
 	 **/
