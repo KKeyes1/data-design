@@ -2,7 +2,7 @@
 namespace Edu\Cnm\DataDesign;
 
 require_once("autoload.php");
-require_once(dirname(__DIR__, 2) . "/vendor/autoload.php");
+require_once(dirname(__DIR__, 2) . "../vendor/autoload.php");
 
 use Ramsey\Uuid\Uuid;
 
@@ -60,6 +60,40 @@ class Profile {
 	 * @var string $profileSalt
 	 **/
 	private $profileSalt;
+
+	/**
+	 * constructor for this Profile
+	 *
+	 * @param string|Uuid $newProfileId id of this Profile or null if a new Profile
+	 * @param string $newProfileActivationToken activation token to safe guard against malicious accounts
+	 * @param string $newProfileFullName string containing newProfileFullName
+	 * @param string $newProfileCaption string containing newProfileCaption can be null
+	 * @param string $newProfileEmail string containing email
+	 * @param string $newProfileHash string containing password hash
+	 * @param string $newProfilePhone string containing phone number
+	 * @param string $newProfileSalt string containing passowrd salt
+	 * @throws \InvalidArgumentException if data types are not valid
+	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
+	 * @throws \TypeError if a data type violates a data hint
+	 * @throws \Exception if some other exception occurs
+	 * @Documentation https://php.net/manual/en/language.oop5.decon.php
+	 **/
+	public function __construct($newProfileId, ?string $newProfileActivationToken, string $newProfileFullName, string $newProfileCaption, string $newProfileEmail, string $newProfileHash, ?string $newProfilePhone, string $newProfileSalt) {
+		try {
+			$this->setProfileId($newProfileId);
+			$this->setProfileActivationToken($newProfileActivationToken);
+			$this->setProfileFullName($newProfileFullName);
+			$this->setProfileCaption($newProfileCaption);
+			$this->setProfileEmail($newProfileEmail);
+			$this->setProfileHash($newProfileHash);
+			$this->setProfilePhone($newProfilePhone);
+			$this->setProfileSalt($newProfileSalt);
+		} catch(\InvalidArgumentException | \RangeException |\TypeError | \Exception $exception) {
+			//determine what exception type was thrown
+			$exceptionType = get_class($exception);
+			throw(new $exceptionType($exception->getMessage(), 0, $exception));
+		}
+	}
 	/**
 	 * accessor method for getting profileId
 	 *
@@ -75,7 +109,7 @@ class Profile {
 	 * @throws \RangeException if $newProfileId is not positive
 	 * @throws \TypeError id profile id is not positive
 	 **/
-	public function setProfileId( newProfileId): void {
+	public function setProfileId($newProfileId): void {
 		try {
 			$uuid = self::validateUuid($newProfileId);
 		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
