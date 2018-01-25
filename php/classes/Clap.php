@@ -130,6 +130,145 @@ class Clap implements \JsonSerializable {
 		$this->clapDate = $newClapDate;
 	}
 	/**
+	 * inserts this clap into mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 **/
+	public function insert(\PDO $pdo) : void {
+		// create query template
+		$query = "INSERT INTO clap(clapArticleId, clapProfileId, likeDate) VALUES(:clapArticleId, :clapProfileId, :likeDate)";
+		$statement = $pdo->prepare($query);
+		// bind the member variables to the place holders in the template
+		$formattedDate = $this->clapArticleId->format("Y-m-d H:i:s.u");
+		$parameters = ["clapArticleId" => $this->clapArticleId->getBytes(), "clapProfileId" => $this->clapProfileId->getBytes(), "clapDate" => $formattedDate];
+		$statement->execute($parameters);
+	}
+	/**
+	 * deletes this clap from mySQL
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @throws \PDOException when mySQL related errors occur
+	 **/
+	public function delete(\PDO $pdo) : void {
+		// create query template
+		$query = "DELETE FROM clap WHERE clapArticleId = :clapArticleId AND clapProfileId = :clapTweetId";
+		$statement = $pdo->prepare($query);
+		//bind the member variables to the placeholders in the template
+		$parameters = ["clapArticleId" => $this->clapArticleId->getBytes(), "clapProfileId" => $this->clapProfileId->getBytes()];
+		$statement->execute($parameters);
+	}
+	/**
+	 * gets the clap by profile id
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string|Uuid $clapProfileId profile id to search for
+	 * @return \SplFixedArray SplFixedArray of Likes found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 **/
+	public static function getClapByClapProfileId(\PDO $pdo, $clapProfileId) : \SPLFixedArray {
+		try {
+			$clapProfileId = self::validateUuid($clapProfileId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT clapArticleId, clapProfileId, clapDate FROM clap WHERE clapProfileId = :clapProfileId";
+		$statement = $pdo->prepare($query);
+		// bind the member variables to the place holders in the template
+		$parameters = ["clapProfileId" => $clapProfileId->getBytes()];
+		$statement->execute($parameters);
+		// build an array of claps
+		$claps = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$clap = new Clap($row["clapArticleId"], $row["clapProfileId"], $row["clapDate"]);
+				$claps[$claps->key()] = $clap;
+				$claps->next();
+			} catch(\Exception $exception) {
+				// if the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($claps);
+	}
+	/**
+	 * gets the clap by article id and profile id
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string|Uuid $clapArticleId tweet id to search for
+	 * @param string|Uuid $clapProfileId profile id to search for
+	 * @return Like|null Like found or null if not found
+	 */
+	public static function getClapByClapArticleIdAndClapProfileId(\PDO $pdo, $clapArticleId, $clapProfileId) : ?Clap {
+		//
+		try {
+			$clapArticleId = self::validateUuid($clapArticleId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		try {
+			$clapProfileId = self::validateUuid($clapProfileId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT clapArticleId, clapProfileId, clapDate FROM clap WHERE clapArticleId = :clapArticleId AND clapProfileId = :clapProfileId";
+		$statement = $pdo->prepare($query);
+		// bind the article id and profile id to the place holder in the template
+		$parameters = ["clapArticleId" => $clapArticleId->getBytes(), "clapProfileId" => $clapProfileId->getBytes()];
+		$statement->execute($parameters);
+		// grab the clap from mySQL
+		try {
+			$clap = null;
+			$statement->setFetchMode(\PDO::FETCH_ASSOC);
+			$row = $statement->fetch();
+			if($row !== false) {
+				$clap = new Clap($row["clapArticleId"], $row["clapProfileId"], $row["clapDate"]);
+			}
+		} catch(\Exception $exception) {
+			// if the row couldn't be converted, rethrow it
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		return ($clap);
+	}
+	/**
+	 * gets the clap by article id
+	 *
+	 * @param \PDO $pdo PDO connection object
+	 * @param string|Uuid $clapArticleId article id to search for
+	 * @return \SplFixedArray array of Likes found or null if not found
+	 * @throws \PDOException when mySQL related errors occur
+	 **/
+	public static function getClapByClapArticleId(\PDO $pdo, $clapArticleId) : \SplFixedArray {
+		try {
+			$clapArticleId = self::validateUuid($clapArticleId);
+		} catch(\InvalidArgumentException | \RangeException | \Exception | \TypeError $exception) {
+			throw(new \PDOException($exception->getMessage(), 0, $exception));
+		}
+		// create query template
+		$query = "SELECT clapArticleId, clapProfileId, clapDate FROM clap WHERE clapArticleId = :clapArticleId";
+		$statement = $pdo->prepare($query);
+		// bind the member variables to the place holders in the template
+		$parameters = ["clapArticleId" => $clapArticleId->getBytes()];
+		$statement->execute($parameters);
+		// build the array of likes
+		$claps = new \SplFixedArray($statement->rowCount());
+		$statement->setFetchMode(\PDO::FETCH_ASSOC);
+		while(($row = $statement->fetch()) !== false) {
+			try {
+				$clap = new Clap($row["clapArticleId"], $row["clapProfileId"], $row["clapDate"]);
+				$claps[$claps->key()] = $clap;
+				$claps->next();
+			} catch(\Exception $exception) {
+				// if the row couldn't be converted, rethrow it
+				throw(new \PDOException($exception->getMessage(), 0, $exception));
+			}
+		}
+		return ($claps);
+	}
+	/**
 	 * formats the state variables for JSON serialization
 	 *
 	 * @return array resulting state variables to serialize
