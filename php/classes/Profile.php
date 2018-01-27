@@ -356,7 +356,7 @@ class Profile implements \JsonSerializable {
 			$query = "INSERT INTO profile(profileId, profileActivationToken, profileFullName, profileCaption,  profileEmail, profileHash, profilePhone, profileSalt) VALUES (:profileId, :profileActivationToken, :profileFullName, :profileCaption, :profileEmail, :profileHash, :profilePhone, :profileSalt)";
 			$statement = $pdo->prepare($query);
 			//bind the member variables to the place holders in the template
-			$parameters = ["profileId" => $this->profileId->getBytes(), "profileActivationToken" => $this->profileActivationToken, "profileFullName" => $this->profileFullName, "profileCaption" => $this->profileCaption, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash,"profilePhone" => $this->profilePhone, "profileSalt" => $this->profileSalt];
+			$parameters = ["profileId" => $this->profileId->getBytes(), "profileActivationToken" => $this->profileActivationToken, "profileFullName" => $this->profileFullName, "profileCaption" => $this->profileCaption, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash, "profilePhone" => $this->profilePhone, "profileSalt" => $this->profileSalt];
 			$statement->execute($parameters);
 		}
 		/**
