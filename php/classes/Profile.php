@@ -4,7 +4,7 @@ namespace Edu\Cnm\DataDesign;
 
 
 require_once("autoload.php");
-require_once(dirname(__DIR__, 2) . "../vendor/autoload.php");
+require_once(dirname(__DIR__, 4) . "/vendor/autoload.php");
 
 use Ramsey\Uuid\Uuid;
 
@@ -13,7 +13,7 @@ use Ramsey\Uuid\Uuid;
  *
  *This is a cross section of what is likely stored in a User's Profile on Medium. This entity is a top-level entity and holds the keys to the other entities I will be using: Article and Clap.
  *
- * @author Kenneth Keyes kkeyes1@cnm.edu updated  for /~kkeyes1/data-design
+ * @author Kenneth Keyes kkeyes1@cnm.edu updated for /~kkeyes1/data-design
  * @author Dylan McDonald <dmcdonald21@cnm.edu>
  * @version 4.0.0
  * @package Edu\Cnm\DataDesign
@@ -38,7 +38,7 @@ class Profile implements \JsonSerializable {
 	 **/
 	private $profileActivationToken;
 	/**
-	 * caption: this would most likely be stored in a different database...but I included it in my preliminary design here...
+	 * user defined caption (this would most likely be stored in a different database...but I included it in my preliminary design here)
 	 * @var string $profileCaption
 	 **/
 	private $profileCaption;
@@ -73,7 +73,7 @@ class Profile implements \JsonSerializable {
 	 * @param string $newProfileEmail string containing email
 	 * @param string $newProfileHash string containing password hash
 	 * @param string $newProfilePhone string containing phone number
-	 * @param string $newProfileSalt string containing passowrd salt
+	 * @param string $newProfileSalt string containing password salt
 	 * @throws \InvalidArgumentException if data types are not valid
 	 * @throws \RangeException if data values are out of bounds (e.g., strings too long, negative integers)
 	 * @throws \TypeError if a data type violates a data hint
@@ -109,7 +109,7 @@ class Profile implements \JsonSerializable {
 	 *
 	 * @param Uuid|string $newProfileId with the value of profileId
 	 * @throws \RangeException if $newProfileId is not positive
-	 * @throws \TypeError id profile id is not positive
+	 * @throws \TypeError if profile id is not positive
 	 **/
 	public function setProfileId($newProfileId): void {
 		try {
@@ -137,16 +137,16 @@ class Profile implements \JsonSerializable {
 	 * @throws \RangeException if $newProfileFullName is > 32 characters (may not work for all names, but I did set this field to 32 in my database so I am sticking with it)
 	 * @throws \TypeError if $newProfileFullName is not a string
 	 **/
-	public function setProfileFullName(string $newProfileFullName) : void {
+	public function setProfileFullName(string $newProfileFullName): void {
 		// verify the full name is secure
 		$newProfileFullName = trim($newProfileFullName);
 		$newProfileFullName = filter_var($newProfileFullName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 		if(empty($newProfileFullName) === true) {
-			throw(new \InvalidArgumentException("profile full name is empty or insecure"));
+			throw(new \InvalidArgumentException("name is empty or insecure"));
 		}
 		// verify the full name will fit in the database
 		if(strlen($newProfileFullName) > 32) {
-			throw(new \RangeException("profile full name is too large"));
+			throw(new \RangeException("name is too large"));
 		}
 		// store the full name
 		$this->profileFullName = $newProfileFullName;
@@ -156,7 +156,7 @@ class Profile implements \JsonSerializable {
 	 *
 	 * @return string value of the activation token
 	 **/
-	public function getProfileActivationToken() : ?string {
+	public function getProfileActivationToken(): ?string {
 		return ($this->profileActivationToken);
 	}
 	/**
@@ -187,7 +187,7 @@ class Profile implements \JsonSerializable {
 	 *
 	 * @return string value of profile caption
 	 **/
-	public function getProfileCaption() :string {
+	public function getProfileCaption(): string {
 		return($this->profileCaption);
 	}
 	/**
@@ -198,20 +198,20 @@ class Profile implements \JsonSerializable {
 	 * @throws \RangeException if $newProfileCaption is > 140 characters
 	 * @throws \TypeError if $newProfileCaption is not a string
 	 **/
-	public function setProfileCaption(string $newProfileCaption) : void {
+	public function setProfileCaption(string $newProfileCaption): void {
 		// verify the profile caption is secure
 		$newProfileCaption = trim($newProfileCaption);
 		$newProfileCaption = filter_var($newProfileCaption, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 		if(empty($newProfileCaption) === true) {
-			throw(new \InvalidArgumentException("tweet content is empty or insecure"));
+			throw(new \InvalidArgumentException("caption is empty or insecure"));
 		}
 
-		// verify the tweet content will fit in the database
+		// verify the caption will fit in the database
 		if(strlen($newProfileCaption) > 140) {
-			throw(new \RangeException("tweet content too large"));
+			throw(new \RangeException("caption is too large"));
 		}
 
-		// store the tweet content
+		// store the caption
 		$this->profileCaption = $newProfileCaption;
 	}
 	/**
@@ -343,7 +343,7 @@ class Profile implements \JsonSerializable {
 		}
 		//store the hash
 		$this->profileSalt = $newProfileSalt;
-
+	}
 		/**
 		 * inserts this Profile into mySQL
 		 *
@@ -355,6 +355,7 @@ class Profile implements \JsonSerializable {
 			// create query template
 			$query = "INSERT INTO profile(profileId, profileActivationToken, profileFullName, profileCaption,  profileEmail, profileHash, profilePhone, profileSalt) VALUES (:profileId, :profileActivationToken, :profileFullName, :profileCaption, :profileEmail, :profileHash, :profilePhone, :profileSalt)";
 			$statement = $pdo->prepare($query);
+			//bind the member variables to the place holders in the template
 			$parameters = ["profileId" => $this->profileId->getBytes(), "profileActivationToken" => $this->profileActivationToken, "profileFullName" => $this->profileFullName, "profileCaption" => $this->profileCaption, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash,"profilePhone" => $this->profilePhone, "profileSalt" => $this->profileSalt];
 			$statement->execute($parameters);
 		}
@@ -381,7 +382,7 @@ class Profile implements \JsonSerializable {
 		 **/
 		public function update(\PDO $pdo): void {
 			// create query template
-			$query = "UPDATE profile SET profileId = :profileId, profileActivationToken = :profileActivationToken, profileFullName = :profileFullName, profileCaption = :profileCaption,profileEmail = :profileEmail, profileHash = :profileHash, profilePhone = :profilePhone, profileSalt = :profileSalt WHERE profileId = :profileId";
+			$query = "UPDATE profile SET profileId = :profileId, profileActivationToken = :profileActivationToken, profileFullName = :profileFullName, profileCaption = :profileCaption, profileEmail = :profileEmail, profileHash = :profileHash, profilePhone = :profilePhone, profileSalt = :profileSalt WHERE profileId = :profileId";
 			$statement = $pdo->prepare($query);
 			// bind the member variables to the place holders in the template
 			$parameters = ["profileId" => $this->profileId->getBytes(), "profileActivationToken" => $this->profileActivationToken, "profileFullName" => $this->profileFullName, "profileCaption" => $this->profileCaption, "profileEmail" => $this->profileEmail, "profileHash" => $this->profileHash, "profilePhone" => $this->profilePhone, "profileSalt" => $this->profileSalt];
@@ -396,7 +397,7 @@ class Profile implements \JsonSerializable {
 		 * @throws \PDOException when mySQL related errors occur
 		 * @throws \TypeError when a variable are not the correct data type
 		 **/
-		public static function getProfileByProfileId(\PDO $pdo, $profileId):?Profile {
+		public static function getProfileByProfileId(\PDO $pdo, $profileId): ?Profile {
 			// sanitize the profile id before searching
 			try {
 				$profileId = self::validateUuid($profileId);
@@ -442,7 +443,7 @@ class Profile implements \JsonSerializable {
 			// create query template
 			$query = "SELECT profileId, profileActivationToken, profileFullName, profileCaption, profileEmail, profileHash, profilePhone, profileSalt FROM profile WHERE profileEmail = :profileEmail";
 			$statement = $pdo->prepare($query);
-			// bind the profile id to the place holder in the template
+			// bind the profile email to the place holder in the template
 			$parameters = ["profileEmail" => $profileEmail];
 			$statement->execute($parameters);
 			// grab the Profile from mySQL
@@ -460,25 +461,25 @@ class Profile implements \JsonSerializable {
 			return ($profile);
 		}
 		/**
-		 * gets the Profile by at handle
+		 * gets the Profile by full name
 		 *
 		 * @param \PDO $pdo PDO connection object
-		 * @param string $profileAtHandle at handle to search for
+		 * @param string $profileFullName full name to search for
 		 * @return \SPLFixedArray of all profiles found
 		 * @throws \PDOException when mySQL related errors occur
 		 * @throws \TypeError when variables are not the correct data type
 		 **/
-		public static function getProfileByProfileFullName(\PDO $pdo, string $profileFullName) : \SPLFixedArray {
-			// sanitize the at handle before searching
+		public static function getProfileByProfileFullName(\PDO $pdo, string $profileFullName): \SPLFixedArray {
+			// sanitize the full name before searching
 			$profileFullName = trim($profileFullName);
 			$profileFullName = filter_var($profileFullName, FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 			if(empty($profileFullName) === true) {
-				throw(new \PDOException("not a valid at handle"));
+				throw(new \PDOException("not a valid name"));
 			}
 			// create query template
 			$query = "SELECT  profileId, profileActivationToken, profileFullName, profileCaption, profileEmail, profileHash, profilePhone, profileSalt FROM profile WHERE profileAtHandle = :profileAtHandle";
 			$statement = $pdo->prepare($query);
-			// bind the profile at handle to the place holder in the template
+			// bind the name to the place holder in the template
 			$parameters = ["profileFullName" => $profileFullName];
 			$statement->execute($parameters);
 			$profiles = new \SPLFixedArray($statement->rowCount());
@@ -505,7 +506,7 @@ class Profile implements \JsonSerializable {
 		 * @throws \TypeError when variables are not the correct data type
 		 **/
 		public
-		static function getProfileByProfileActivationToken(\PDO $pdo, string $profileActivationToken) : ?Profile {
+		static function getProfileByProfileActivationToken(\PDO $pdo, string $profileActivationToken): ?Profile {
 			//make sure activation token is in the right format and that it is a string representation of a hexadecimal
 			$profileActivationToken = trim($profileActivationToken);
 			if(ctype_xdigit($profileActivationToken) === false) {
@@ -544,6 +545,4 @@ class Profile implements \JsonSerializable {
 			unset($fields["profileSalt"]);
 			return ($fields);
 		}
-	}
-
 }
